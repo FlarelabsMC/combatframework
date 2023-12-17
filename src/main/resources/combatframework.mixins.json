@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.squoshi.combatframework.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "combatframework.refmap.json",
+  "mixins": [
+    "MinecraftClientMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
