@@ -24,6 +24,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 @Mod("combatframework")
@@ -72,7 +73,8 @@ public class CombatFramework {
 
     @SubscribeEvent
     public void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(CombatFrameworkKeys.NORMAL_ATTACK);
+//        event.register(CombatFrameworkKeys.NORMAL_ATTACK);
+        Arrays.stream(CombatFrameworkKeys.getKeys()).toList().forEach(event::register);
     }
 
     public void onClientTick(TickEvent.ClientTickEvent event) {
