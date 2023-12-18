@@ -28,8 +28,7 @@ import java.util.Arrays;
 
 @Mod("combatframework")
 public class CombatFramework {
-
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger("Combat Framework");
 
     public static final String MOD_ID = "combatframework";
 

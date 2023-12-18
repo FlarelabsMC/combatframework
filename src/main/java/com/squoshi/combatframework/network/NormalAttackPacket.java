@@ -10,12 +10,16 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 public class NormalAttackPacket {
+    private static final Logger LOGGER = LogManager.getLogger("Combat Framework");
+
     private final UUID entityId;
     private final UUID playerId;
     private final int attack;
@@ -49,6 +53,8 @@ public class NormalAttackPacket {
                     entities.forEach(player::attack);
                 }
             });
+        } else {
+            LOGGER.error("NormalAttackPacket received on the wrong side. This shouldn't happen! Please report to the mod author.");
         }
         ctx.setPacketHandled(true);
     }
