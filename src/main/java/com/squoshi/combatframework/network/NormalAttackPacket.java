@@ -8,10 +8,12 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class NormalAttackPacket {
     private final UUID entityId;
@@ -24,27 +26,30 @@ public class NormalAttackPacket {
         this.attack = attack;
     }
 
-    public static void encode(NormalAttackPacket msg, FriendlyByteBuf buf) {
+    public static void encode(final NormalAttackPacket msg, final FriendlyByteBuf buf) {
         buf.writeUUID(msg.entityId);
         buf.writeUUID(msg.playerId);
         buf.writeInt(msg.attack);
     }
 
-    public static NormalAttackPacket decode(FriendlyByteBuf buf, NormalAttackPacket msg) {
+    public static NormalAttackPacket decode(FriendlyByteBuf buf) {
         return new NormalAttackPacket(buf.readUUID(), buf.readUUID(), buf.readInt());
     }
 
 
-    public static void handle(NormalAttackPacket msg, NetworkEvent.Context ctx) {
-        ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.getSender();
-            if (player != null) {
-                HitResult result = ProjectileUtil.getEntityHitResult(player.level(), player, new Vec3(player.getX(), player.getY(), player.getZ()), new Vec3(player.getX() + player.getLookAngle().x * 4.0D, player.getY() + player.getLookAngle().y * 4.0D, player.getZ() + player.getLookAngle().z * 4.0D), new AABB(player.getX() - 4.0D, player.getY() - 4.0D, player.getZ() - 4.0D, player.getX() + 4.0D, player.getY() + 4.0D, player.getZ() + 4.0D), (entity) -> !entity.isSpectator() && entity instanceof LivingEntity);
-                assert result != null;
-                List<Entity> entities = player.level().getEntities(player, new AABB(result.getLocation().x - 0.1, result.getLocation().y - 0.1, result.getLocation().z - 0.1, result.getLocation().x + 0.1, result.getLocation().y + 0.1, result.getLocation().z + 0.1), (ent) -> ent instanceof LivingEntity);
-                entities.forEach(player::attack);
-            }
-        });
+    public static void handle(final NormalAttackPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context ctx = contextSupplier.get();
+        if (ctx.getDirection().getReceptionSide() == LogicalSide.SERVER) {
+            ctx.enqueueWork(() -> {
+                ServerPlayer player = ctx.getSender();
+                if (player != null) {
+                    HitResult result = ProjectileUtil.getEntityHitResult(player.level(), player, new Vec3(player.getX(), player.getY(), player.getZ()), new Vec3(player.getX() + player.getLookAngle().x * 4.0D, player.getY() + player.getLookAngle().y * 4.0D, player.getZ() + player.getLookAngle().z * 4.0D), new AABB(player.getX() - 4.0D, player.getY() - 4.0D, player.getZ() - 4.0D, player.getX() + 4.0D, player.getY() + 4.0D, player.getZ() + 4.0D), (entity) -> !entity.isSpectator() && entity instanceof LivingEntity);
+                    assert result != null;
+                    List<Entity> entities = player.level().getEntities(player, new AABB(result.getLocation().x - 0.1, result.getLocation().y - 0.1, result.getLocation().z - 0.1, result.getLocation().x + 0.1, result.getLocation().y + 0.1, result.getLocation().z + 0.1), (ent) -> ent instanceof LivingEntity);
+                    entities.forEach(player::attack);
+                }
+            });
+        }
         ctx.setPacketHandled(true);
     }
 }
