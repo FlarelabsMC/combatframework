@@ -4,7 +4,6 @@ import com.squoshi.combatframework.client.CombatFrameworkKeys;
 import com.squoshi.combatframework.network.NormalAttackPacket;
 import com.squoshi.combatframework.network.PacketHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
@@ -26,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 @Mod("combatframework")
 public class CombatFramework {
@@ -74,7 +72,6 @@ public class CombatFramework {
 
     @SubscribeEvent
     public void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
-//        event.register(CombatFrameworkKeys.NORMAL_ATTACK);
         Arrays.stream(CombatFrameworkKeys.getKeys()).toList().forEach(event::register);
     }
 
