@@ -11,6 +11,6 @@ public class PacketHandler {
 
     public static void registerMessages() {
         INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(CombatFramework.MOD_ID, "main"), () -> VERSION, VERSION::equals, VERSION::equals);
-        INSTANCE.registerMessage(0, NormalAttackPacket.class, NormalAttackPacket::encode, NormalAttackPacket::decode, NormalAttackPacket::handle);
+        INSTANCE.registerMessage(0, AttackPacket.class, AttackPacket::encode, AttackPacket::decode, AttackPacket::handle);
     }
 }

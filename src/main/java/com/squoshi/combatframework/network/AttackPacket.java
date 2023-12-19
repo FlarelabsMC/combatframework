@@ -14,34 +14,27 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Supplier;
 
-public class NormalAttackPacket {
+public class AttackPacket {
     private static final Logger LOGGER = LogManager.getLogger("Combat Framework");
 
-    private final UUID entityId;
-    private final UUID playerId;
     private final int attack;
 
-    public NormalAttackPacket(UUID entityId, UUID playerId, int attack) {
-        this.entityId = entityId;
-        this.playerId = playerId;
+    public AttackPacket(int attack) {
         this.attack = attack;
     }
 
-    public static void encode(final NormalAttackPacket msg, final FriendlyByteBuf buf) {
-        buf.writeUUID(msg.entityId);
-        buf.writeUUID(msg.playerId);
+    public static void encode(final AttackPacket msg, final FriendlyByteBuf buf) {
         buf.writeInt(msg.attack);
     }
 
-    public static NormalAttackPacket decode(FriendlyByteBuf buf) {
-        return new NormalAttackPacket(buf.readUUID(), buf.readUUID(), buf.readInt());
+    public static AttackPacket decode(FriendlyByteBuf buf) {
+        return new AttackPacket(buf.readInt());
     }
 
 
-    public static void handle(final NormalAttackPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(final AttackPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context ctx = contextSupplier.get();
         if (ctx.getDirection().getReceptionSide() == LogicalSide.SERVER) {
             ctx.enqueueWork(() -> {
@@ -54,7 +47,7 @@ public class NormalAttackPacket {
                 }
             });
         } else {
-            LOGGER.error("NormalAttackPacket received on the wrong side. This shouldn't happen! Please report to the mod author.");
+            LOGGER.error("AttackPacket received on the wrong side. This shouldn't happen! Please report to the mod author.");
         }
         ctx.setPacketHandled(true);
     }

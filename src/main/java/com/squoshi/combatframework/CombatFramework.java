@@ -1,7 +1,7 @@
 package com.squoshi.combatframework;
 
 import com.squoshi.combatframework.client.CombatFrameworkKeys;
-import com.squoshi.combatframework.network.NormalAttackPacket;
+import com.squoshi.combatframework.network.AttackPacket;
 import com.squoshi.combatframework.network.PacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
@@ -31,8 +31,6 @@ public class CombatFramework {
     private static final Logger LOGGER = LogManager.getLogger("Combat Framework");
 
     public static final String MOD_ID = "combatframework";
-
-    public static final int AP_NORMALATTACK_ID = 0;
 
     public CombatFramework() {
         PacketHandler.registerMessages();
@@ -86,7 +84,7 @@ public class CombatFramework {
             for (Entity entity : Minecraft.getInstance().level.getEntities(Minecraft.getInstance().player, new AABB(x - 5, y - 5, z - 5, x + 5, y + 5, z + 5))) {
                 if (entity instanceof LivingEntity && entity.isAlive() && entity != Minecraft.getInstance().player) {
                     LOGGER.info(entity);
-                    PacketHandler.INSTANCE.sendToServer(new NormalAttackPacket(entity.getUUID(), Minecraft.getInstance().player.getUUID(), 0));
+                    PacketHandler.INSTANCE.sendToServer(new AttackPacket(Constants.AttackType.NORMAL_ATTACK_ID));
                 }
             }
         }
